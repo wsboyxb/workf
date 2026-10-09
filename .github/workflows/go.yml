@@ -11,6 +11,9 @@ on:
   # pull_request:
   #   branches: [ "main" ]
 
+permissions:
+  contents: write
+
 jobs:
 
   build:
@@ -23,8 +26,19 @@ jobs:
       with:
         go-version: '1.25.x'
 
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
+    -
+      name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v7
+      with:
+        # either 'goreleaser' (default) or 'goreleaser-pro'
+        distribution: goreleaser
+        # 'latest', 'nightly', or a semver
+        version: '~> v2'
+        args: release --clean
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Build
+    #   run: go build -v ./...
+    #
+    # - name: Test
+    #   run: go test -v ./...
